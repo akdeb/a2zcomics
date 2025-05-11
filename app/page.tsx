@@ -13,16 +13,29 @@ import type React from "react"
 
 const greekGods = [
   {
-    name: "Athena",
-    domains: ["strategy", "wisdom"],
-    strengths: ["strategy", "creativity", "resilience"],
-    weaknesses: ["overthinking", "pride"],
-    vibes: ["the leader", "the quiet observer"],
-    weapons: ["sword", "shield", "spear"],
+    name: "Aphrodite",
+    domains: ["love", "beauty"],
+    strengths: ["charm", "creativity"],
+    weaknesses: ["jealousy", "vanity"],
+    vibes: ["the smooth talker", "the wild card"],
+    weapons: ["mirror", "magic girdle"],
     visual: {
-      masculine: "armor + owl",
-      feminine: "helmet + flowing robes",
-      androgynous: "austere war cloak",
+      masculine: "gold chain & glow-up",
+      feminine: "flowing pink + sparkles",
+      androgynous: "gender-melting glam",
+    },
+  },
+  {
+    name: "Apollo",
+    domains: ["music", "healing", "prophecy"],
+    strengths: ["creativity", "leadership", "persuasion"],
+    weaknesses: ["pride", "vengefulness"],
+    vibes: ["the leader", "the smooth talker"],
+    weapons: ["lyre", "bow", "poison"],
+    visual: {
+      masculine: "golden laurel crown + lyre",
+      feminine: "divine musician robes",
+      androgynous: "ethereal artist aura",
     },
   },
   {
@@ -39,29 +52,42 @@ const greekGods = [
     },
   },
   {
-    name: "Aphrodite",
-    domains: ["love", "beauty"],
-    strengths: ["charm", "creativity"],
-    weaknesses: ["jealousy", "vanity"],
-    vibes: ["the smooth talker", "the wild card"],
-    weapons: ["mirror", "magic girdle"],
+    name: "Artemis",
+    domains: ["nature", "independence"],
+    strengths: ["resilience", "creativity"],
+    weaknesses: ["jealousy", "vengefulness"],
+    vibes: ["the quiet observer", "the peacemaker"],
+    weapons: ["bow and arrow"],
     visual: {
-      masculine: "gold chain & glow-up",
-      feminine: "flowing pink + sparkles",
-      androgynous: "gender-melting glam",
+      masculine: "wild archer garb",
+      feminine: "moonlit huntress gear",
+      androgynous: "forest ranger fit",
     },
   },
   {
-    name: "Hermes",
-    domains: ["speed", "wit"],
-    strengths: ["persuasion", "creativity"],
-    weaknesses: ["indecision", "impulsiveness"],
-    vibes: ["the smooth talker", "the quiet observer"],
-    weapons: ["winged sandals", "staff"],
+    name: "Athena",
+    domains: ["strategy", "wisdom"],
+    strengths: ["strategy", "creativity", "resilience"],
+    weaknesses: ["overthinking", "pride"],
+    vibes: ["the leader", "the quiet observer"],
+    weapons: ["sword", "shield", "spear"],
     visual: {
-      masculine: "light traveler robes",
-      feminine: "trickster cloak",
-      androgynous: "vaporwave courier",
+      masculine: "armor + owl",
+      feminine: "helmet + flowing robes",
+      androgynous: "austere war cloak",
+    },
+  },
+  {
+    name: "Demeter",
+    domains: ["agriculture", "harvest", "nurturing"],
+    strengths: ["resilience", "creativity", "leadership"],
+    weaknesses: ["overthinking", "vengefulness"],
+    vibes: ["the peacemaker", "the leader"],
+    weapons: ["sickle", "torch"],
+    visual: {
+      masculine: "harvest crown + grain",
+      feminine: "earth mother robes",
+      androgynous: "nature's guardian",
     },
   },
   {
@@ -70,7 +96,7 @@ const greekGods = [
     strengths: ["creativity", "chaos energy"],
     weaknesses: ["impulsiveness", "pride"],
     vibes: ["the chaos agent", "the wild card"],
-    weapons: ["wine", "fire"],
+    weapons: ["wine", "thyrsus"],
     visual: {
       masculine: "grape crown + silk",
       feminine: "divine rave queen",
@@ -91,29 +117,68 @@ const greekGods = [
     },
   },
   {
+    name: "Hephaestus",
+    domains: ["craftsmanship", "fire", "technology"],
+    strengths: ["creativity", "resilience", "strategy"],
+    weaknesses: ["overthinking", "indecision"],
+    vibes: ["the quiet observer", "the peacemaker"],
+    weapons: ["hammer", "anvil", "fire"],
+    visual: {
+      masculine: "smith's apron + tools",
+      feminine: "forge-master's gear",
+      androgynous: "steampunk artisan",
+    },
+  },
+  {
+    name: "Hermes",
+    domains: ["speed", "wit"],
+    strengths: ["persuasion", "creativity"],
+    weaknesses: ["indecision", "impulsiveness"],
+    vibes: ["the smooth talker", "the quiet observer"],
+    weapons: ["winged sandals", "caduceus"],
+    visual: {
+      masculine: "light traveler robes",
+      feminine: "trickster cloak",
+      androgynous: "vaporwave courier",
+    },
+  },
+  {
+    name: "Hestia",
+    domains: ["hearth", "home", "family"],
+    strengths: ["resilience", "strategy", "persuasion"],
+    weaknesses: ["overthinking", "indecision"],
+    vibes: ["the peacemaker", "the quiet observer"],
+    weapons: ["hearth flame", "sacred fire"],
+    visual: {
+      masculine: "hearth keeper's robes",
+      feminine: "flame-touched vestments",
+      androgynous: "eternal flame form",
+    },
+  },
+  {
+    name: "Poseidon",
+    domains: ["oceans", "storms", "earthquakes"],
+    strengths: ["power", "chaos energy", "leadership"],
+    weaknesses: ["pride", "impulsiveness"],
+    vibes: ["the wild card", "the leader"],
+    weapons: ["trident", "storm"],
+    visual: {
+      masculine: "sea crown + trident",
+      feminine: "wave-woven armor",
+      androgynous: "ocean storm form",
+    },
+  },
+  {
     name: "Zeus",
     domains: ["leadership", "sky"],
     strengths: ["leadership", "power"],
     weaknesses: ["pride", "impulsiveness"],
     vibes: ["the leader"],
-    weapons: ["lightning bolt"],
+    weapons: ["lightning bolt", "thunder"],
     visual: {
       masculine: "chest out + beard",
       feminine: "thunder goddess robes",
       androgynous: "storm-wrapped titan",
-    },
-  },
-  {
-    name: "Artemis",
-    domains: ["nature", "independence"],
-    strengths: ["resilience", "creativity"],
-    weaknesses: ["jealousy", "vengefulness"],
-    vibes: ["the quiet observer", "the peacemaker"],
-    weapons: ["bow and arrow"],
-    visual: {
-      masculine: "wild archer garb",
-      feminine: "moonlit huntress gear",
-      androgynous: "forest ranger fit",
     },
   },
 ];
@@ -132,6 +197,14 @@ type GodMatch = {
   name: string;
   score: number;
   visual: string;
+};
+
+// Add this type definition before the getCardColors function
+type CardColors = {
+  border: string;
+  bg: string;
+  accent: string;
+  gradient: string;
 };
 
 function matchGod(userInput: UserInput): GodMatch {
@@ -191,6 +264,50 @@ function matchGod(userInput: UserInput): GodMatch {
   // Sort by score and return the highest match
   scores.sort((a, b) => b.score - a.score);
   return scores[0];
+}
+
+function getCardColors(god: GodMatch, userInput: UserInput): CardColors {
+  // Base color mappings for different domains
+  const domainColors = {
+    // Primary domains
+    love: { border: "border-pink-500", bg: "bg-pink-50", accent: "bg-pink-500" },
+    war: { border: "border-red-600", bg: "bg-red-50", accent: "bg-red-600" },
+    wisdom: { border: "border-blue-500", bg: "bg-blue-50", accent: "bg-blue-500" },
+    music: { border: "border-purple-500", bg: "bg-purple-50", accent: "bg-purple-500" },
+    nature: { border: "border-green-500", bg: "bg-green-50", accent: "bg-green-500" },
+    death: { border: "border-gray-700", bg: "bg-gray-50", accent: "bg-gray-700" },
+    leadership: { border: "border-amber-500", bg: "bg-amber-50", accent: "bg-amber-500" },
+    // Secondary domains
+    beauty: { border: "border-rose-500", bg: "bg-rose-50", accent: "bg-rose-500" },
+    chaos: { border: "border-orange-600", bg: "bg-orange-50", accent: "bg-orange-600" },
+    healing: { border: "border-emerald-500", bg: "bg-emerald-50", accent: "bg-emerald-500" },
+    prophecy: { border: "border-indigo-500", bg: "bg-indigo-50", accent: "bg-indigo-500" },
+    craftsmanship: { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600" },
+    harvest: { border: "border-lime-500", bg: "bg-lime-50", accent: "bg-lime-500" },
+    oceans: { border: "border-cyan-500", bg: "bg-cyan-50", accent: "bg-cyan-500" },
+    hearth: { border: "border-orange-500", bg: "bg-orange-50", accent: "bg-orange-500" },
+  };
+
+  // Find the matched god's full data
+  const matchedGod = greekGods.find(g => g.name === god.name);
+  if (!matchedGod) return { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600", gradient: "bg-amber-50" };
+
+  // Get colors based on primary domain
+  const primaryDomain = matchedGod.domains[0];
+  const colors = domainColors[primaryDomain as keyof typeof domainColors] || 
+                { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600" };
+
+  // Add a subtle gradient based on secondary domain if it exists
+  const secondaryDomain = matchedGod.domains[1];
+  const secondaryColors = secondaryDomain ? 
+    domainColors[secondaryDomain as keyof typeof domainColors] : null;
+
+  return {
+    ...colors,
+    gradient: secondaryColors ? 
+      `bg-gradient-to-br from-${colors.bg.split('-')[1]}-50 to-${secondaryColors.bg.split('-')[1]}-100` :
+      colors.bg
+  };
 }
 
 export default function TopTrumpGenerator() {
@@ -613,10 +730,11 @@ export default function TopTrumpGenerator() {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-6">Your Greek Myth Top Trump</h1>
 
-            <Card className="w-full max-w-sm shadow-xl border-4 border-amber-600 overflow-hidden">
-              <div className="bg-gradient-to-b from-amber-500 to-amber-600 p-3 text-white">
-                <h2 className="text-xl font-bold text-center">{matchGod(formData).name}</h2>
-                <div className="text-center text-sm text-amber-900 mb-2">{matchGod(formData).visual}</div>
+            <Card className={`relative w-full max-w-sm shadow-2xl border-4 ${getCardColors(matchGod(formData), formData).border} rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-gray-800`}>
+              {/* Metallic Header */}
+              <div className="bg-gradient-to-r from-yellow-400 to-amber-600 p-3 flex flex-col items-center border-b-4 border-yellow-700 shadow-md">
+                <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1 font-fun">DIVINE NAME</span>
+                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase font-fun">{matchGod(formData).name}</h2>
               </div>
 
               {result && !loading ? (
@@ -637,28 +755,45 @@ export default function TopTrumpGenerator() {
                 </div>
               )}
 
-              <div className="p-4 bg-amber-50">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">Divine Stats</h3>
-
-                  {Object.entries(generateStats()).map(([stat, value]) => (
-                    <div key={stat} className="flex justify-between items-center mb-1">
-                      <span className="capitalize">{stat}</span>
-                      <div className="flex items-center">
-                        <span className="mr-2 font-bold">{value}</span>
-                        <div className="w-24 bg-gray-200 h-2 rounded-full">
-                          <div className="bg-amber-600 h-2 rounded-full" style={{ width: `${value}%` }}></div>
+              {/* Stat Bars */}
+              <div className="px-4 py-3 bg-gradient-to-br from-gray-900 to-gray-800 border-b-2 border-gray-700">
+                <div className="mb-2">
+                  <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase font-fun">Divine Stats</h3>
+                  {Object.entries(generateStats()).map(([stat, value], idx) => {
+                    // Assign a color for each stat bar
+                    const statColors = [
+                      "bg-blue-400", // power
+                      "bg-green-400", // wisdom
+                      "bg-pink-400", // charisma
+                      "bg-purple-400", // cunning
+                      "bg-orange-400", // endurance
+                    ];
+                    return (
+                      <div key={stat} className="flex items-center mb-1">
+                        <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider font-fun">{stat}</span>
+                        <span className="w-8 text-right text-xs font-bold text-yellow-200 font-fun">{value}</span>
+                        <div className="flex-1 ml-2 h-3 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className={`${statColors[idx % statColors.length]} h-3 rounded-full`}
+                            style={{ width: `${value}%` }}
+                          ></div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Divine Essence</h3>
-                  <p className="text-sm">{generateDescription()}</p>
+                    );
+                  })}
                 </div>
               </div>
+
+              {/* Description Box */}
+              <div className="px-4 py-3 bg-gradient-to-br from-yellow-700 to-yellow-900">
+                <div className="rounded-md bg-yellow-800/80 p-2 shadow-inner">
+                  <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest font-fun">Divine Essence</h3>
+                  <p className="text-sm text-yellow-100 leading-tight">{generateDescription()}</p>
+                </div>
+              </div>
+
+              {/* Card Border Accent */}
+              <div className="absolute inset-0 pointer-events-none border-4 border-yellow-400 rounded-xl" style={{ boxShadow: '0 0 16px 4px #facc15, 0 2px 8px #0008' }}></div>
             </Card>
 
             <Button
