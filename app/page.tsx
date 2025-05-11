@@ -169,6 +169,9 @@ export default function TopTrumpGenerator() {
   // State for showing the generated card
   const [showCard, setShowCard] = useState(false)
 
+  const [result, setResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
   // File input reference
   const fileInputRef = useRef<HTMLInputElement>(null)
 
