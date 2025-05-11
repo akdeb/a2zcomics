@@ -675,8 +675,8 @@ export default function TopTrumpGenerator() {
             <Card className={`relative w-full max-w-sm shadow-2xl border-4 ${getCardColors(matchGod(formData), formData).border} rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-gray-800`}>
               {/* Metallic Header */}
               <div className="bg-gradient-to-r from-yellow-400 to-amber-600 p-3 flex flex-col items-center border-b-4 border-yellow-700 shadow-md">
-                <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1">DIVINE NAME</span>
-                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase">{matchGod(formData).name}</h2>
+                <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1 font-fun">DIVINE NAME</span>
+                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase font-fun">{matchGod(formData).name}</h2>
               </div>
 
               {/* God Image */}
@@ -695,7 +695,7 @@ export default function TopTrumpGenerator() {
               {/* Stat Bars */}
               <div className="px-4 py-3 bg-gradient-to-br from-gray-900 to-gray-800 border-b-2 border-gray-700">
                 <div className="mb-2">
-                  <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase">Divine Stats</h3>
+                  <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase font-fun">Divine Stats</h3>
                   {Object.entries(generateStats()).map(([stat, value], idx) => {
                     // Assign a color for each stat bar
                     const statColors = [
@@ -707,8 +707,8 @@ export default function TopTrumpGenerator() {
                     ];
                     return (
                       <div key={stat} className="flex items-center mb-1">
-                        <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider">{stat}</span>
-                        <span className="w-8 text-right text-xs font-bold text-yellow-200">{value}</span>
+                        <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider font-fun">{stat}</span>
+                        <span className="w-8 text-right text-xs font-bold text-yellow-200 font-fun">{value}</span>
                         <div className="flex-1 ml-2 h-3 bg-gray-700 rounded-full overflow-hidden">
                           <div
                             className={`${statColors[idx % statColors.length]} h-3 rounded-full`}
@@ -721,15 +721,10 @@ export default function TopTrumpGenerator() {
                 </div>
               </div>
 
-              {/* Visual Description */}
-              <div className="px-4 py-2 bg-gradient-to-r from-amber-200 to-yellow-100 border-b-2 border-yellow-400">
-                <div className="text-xs text-gray-800 text-center italic font-semibold">{matchGod(formData).visual}</div>
-                </div>
-
               {/* Description Box */}
               <div className="px-4 py-3 bg-gradient-to-br from-yellow-700 to-yellow-900">
                 <div className="rounded-md bg-yellow-800/80 p-2 shadow-inner">
-                  <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest">Divine Essence</h3>
+                  <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest font-fun">Divine Essence</h3>
                   <p className="text-sm text-yellow-100 leading-tight">{generateDescription()}</p>
                 </div>
               </div>
