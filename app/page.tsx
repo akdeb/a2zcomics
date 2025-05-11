@@ -137,35 +137,53 @@ type GodMatch = {
 function matchGod(userInput: UserInput): GodMatch {
   const { strength, weakness, socialVibe, weapon, gender } = userInput;
   
-  // Helper function to add random variation to a score
+  // Helper function to add random variation to a score with more precision
   const addRandomVariation = (baseScore: number, maxVariation: number = 1) => {
-    const variation = (Math.random() * 2 - 1) * maxVariation; // Random value between -maxVariation and +maxVariation
-    return Math.max(0, baseScore + variation); // Ensure score doesn't go below 0
+    // Generate a random number between -maxVariation and +maxVariation with more decimal places
+    const variation = (Math.random() * 2 - 1) * maxVariation;
+    // Add a small random factor (0-0.3) to create more variety
+    const extraRandom = Math.random() * 0.3;
+    return Math.max(0, baseScore + variation + extraRandom);
+  };
+
+  // Helper function to generate a random personality factor
+  const getPersonalityFactor = () => {
+    // Returns a random number between 0.8 and 1.2 to simulate personality compatibility
+    return 0.8 + Math.random() * 0.4;
   };
 
   const scores = greekGods.map((god) => {
     let score = 0;
+    const personalityFactor = getPersonalityFactor();
     
-    // Add random variation to each component
+    // Add random variation to each component with different ranges
     if (god.strengths.includes(strength)) {
-      score += addRandomVariation(3, 0.5); // Base 3 points with ±0.5 variation
+      // Base 3 points with ±0.8 variation and personality factor
+      score += addRandomVariation(3, 0.8) * personalityFactor;
     }
     if (god.weaknesses.includes(weakness)) {
-      score += addRandomVariation(2, 0.4); // Base 2 points with ±0.4 variation
+      // Base 2 points with ±0.6 variation and personality factor
+      score += addRandomVariation(2, 0.6) * personalityFactor;
     }
     if (god.vibes.includes(socialVibe)) {
-      score += addRandomVariation(2, 0.3); // Base 2 points with ±0.3 variation
+      // Base 2 points with ±0.7 variation and personality factor
+      score += addRandomVariation(2, 0.7) * personalityFactor;
     }
     if (god.weapons.includes(weapon)) {
-      score += addRandomVariation(1, 0.2); // Base 1 point with ±0.2 variation
+      // Base 1 point with ±0.5 variation and personality factor
+      score += addRandomVariation(1, 0.5) * personalityFactor;
     }
 
-    // Add a small random bonus (0-0.5) to create more variety in matches
-    score += Math.random() * 0.5;
+    // Add a random bonus that varies based on the god's domains
+    const domainBonus = god.domains.length * (0.2 + Math.random() * 0.3);
+    score += domainBonus;
+
+    // Add a small random factor (0-0.4) to create more variety
+    score += Math.random() * 0.4;
 
     return {
       name: god.name,
-      score: Number(score.toFixed(2)), // Round to 2 decimal places for cleaner numbers
+      score: Number(score.toFixed(3)), // Round to 3 decimal places for more precision
       visual: god.visual[gender as keyof typeof god.visual] || god.visual.androgynous,
     };
   });
