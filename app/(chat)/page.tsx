@@ -1,7 +1,13 @@
 import { Chat } from "@/components/custom/chat";
+import { IntakeForm } from "@/components/custom/intake-form";
 import { generateUUID } from "@/lib/utils";
 
 export default async function Page() {
   const id = generateUUID();
-  return <Chat key={id} id={id} initialMessages={[]} />;
+  return (
+    <div className="flex flex-col items-center justify-center h-screen">
+      <h1 className="text-4xl font-bold">a2zcomics</h1>
+      <IntakeForm />
+    </div>
+  );
 }

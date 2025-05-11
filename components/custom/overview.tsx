@@ -20,7 +20,7 @@ export const Overview = () => {
           <MessageIcon />
         </p>
         <p>
-          This is an open source Chatbot template powered by the Google Gemini
+          This is an open sourceeeee Chatbot template powered by the Google Gemini
           model built with Next.js and the AI SDK by Vercel. It uses the{" "}
           <code className="rounded-sm bg-muted-foreground/15 px-1.5 py-0.5">
             streamText
