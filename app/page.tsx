@@ -1,14 +1,15 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useRef } from "react"
+import { ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react"
+import Image from "next/image"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react"
-import Image from "next/image"
+
+import type React from "react"
 
 export default function TopTrumpGenerator() {
   // State for form data
@@ -326,6 +327,7 @@ export default function TopTrumpGenerator() {
                   </div>
                 ) : (
                   <RadioGroup
+                    name={currentStepData.id}
                     value={formData[currentStepData.id as keyof typeof formData] as string}
                     onValueChange={handleOptionSelect}
                     className="space-y-3"
@@ -335,7 +337,7 @@ export default function TopTrumpGenerator() {
                         key={option.value}
                         className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-gray-50"
                       >
-                        <RadioGroupItem value={option.value} id={option.value} />
+                        <RadioGroupItem value={option.value} />
                         <Label htmlFor={option.value} className="flex-grow cursor-pointer">
                           {option.label}
                         </Label>

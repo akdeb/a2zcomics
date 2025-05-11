@@ -1,32 +1,55 @@
 import React from "react";
 
-export function RadioGroup({ children, name, className = "", ...props }: React.PropsWithChildren<{ name: string; className?: string } & React.HTMLAttributes<HTMLDivElement>>) {
+type RadioGroupContextType = {
+  value: string;
+  onValueChange: (value: string) => void;
+  name: string;
+};
+
+const RadioGroupContext = React.createContext<RadioGroupContextType | undefined>(undefined);
+
+export function RadioGroup({
+  children,
+  value,
+  onValueChange,
+  name,
+  className = "",
+  ...props
+}: React.PropsWithChildren<{
+  value: string;
+  onValueChange: (value: string) => void;
+  name: string;
+  className?: string;
+} & React.HTMLAttributes<HTMLDivElement>>) {
   return (
-    <div role="radiogroup" className={className} {...props}>
-      {React.Children.map(children, child => {
-        if (
-          React.isValidElement(child) &&
-          (child.type as any).displayName === "RadioGroupItem"
-        ) {
-          const childProps = child.props || {};
-          return React.cloneElement(child, {
-            ...childProps,
-            name: childProps.name || name,
-          });
-        }
-        return child;
-      })}
-    </div>
+    <RadioGroupContext.Provider value={{ value, onValueChange, name }}>
+      <div role="radiogroup" className={className} {...props}>
+        {children}
+      </div>
+    </RadioGroupContext.Provider>
   );
 }
 
-export function RadioGroupItem({ value, children, name, className = "", ...props }: { value: string; name?: string; className?: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+export function RadioGroupItem({
+  value,
+  children,
+  className = "",
+  ...props
+}: {
+  value: string;
+  className?: string;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  const context = React.useContext(RadioGroupContext);
+  if (!context) throw new Error("RadioGroupItem must be used within a RadioGroup");
+
   return (
     <label className={`inline-flex items-center space-x-2 cursor-pointer ${className}`}>
       <input
         type="radio"
-        name={name}
+        name={context.name}
         value={value}
+        checked={context.value === value}
+        onChange={() => context.onValueChange(value)}
         className="form-radio text-amber-500 focus:ring-amber-500"
         {...props}
       />
