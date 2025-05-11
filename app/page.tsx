@@ -11,6 +11,147 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 import type React from "react"
 
+const greekGods = [
+  {
+    name: "Athena",
+    domains: ["strategy", "wisdom"],
+    strengths: ["strategy", "creativity", "resilience"],
+    weaknesses: ["overthinking", "pride"],
+    vibes: ["the leader", "the quiet observer"],
+    weapons: ["sword", "shield", "spear"],
+    visual: {
+      masculine: "armor + owl",
+      feminine: "helmet + flowing robes",
+      androgynous: "austere war cloak",
+    },
+  },
+  {
+    name: "Ares",
+    domains: ["war", "chaos"],
+    strengths: ["strength", "chaos energy"],
+    weaknesses: ["impulsiveness", "pride"],
+    vibes: ["the wild card", "the chaos agent"],
+    weapons: ["sword", "spear"],
+    visual: {
+      masculine: "blood-red armor",
+      feminine: "battle corset + spear",
+      androgynous: "brutalist warform",
+    },
+  },
+  {
+    name: "Aphrodite",
+    domains: ["love", "beauty"],
+    strengths: ["charm", "creativity"],
+    weaknesses: ["jealousy", "vanity"],
+    vibes: ["the smooth talker", "the wild card"],
+    weapons: ["mirror", "magic girdle"],
+    visual: {
+      masculine: "gold chain & glow-up",
+      feminine: "flowing pink + sparkles",
+      androgynous: "gender-melting glam",
+    },
+  },
+  {
+    name: "Hermes",
+    domains: ["speed", "wit"],
+    strengths: ["persuasion", "creativity"],
+    weaknesses: ["indecision", "impulsiveness"],
+    vibes: ["the smooth talker", "the quiet observer"],
+    weapons: ["winged sandals", "staff"],
+    visual: {
+      masculine: "light traveler robes",
+      feminine: "trickster cloak",
+      androgynous: "vaporwave courier",
+    },
+  },
+  {
+    name: "Dionysus",
+    domains: ["wine", "madness", "art"],
+    strengths: ["creativity", "chaos energy"],
+    weaknesses: ["impulsiveness", "pride"],
+    vibes: ["the chaos agent", "the wild card"],
+    weapons: ["wine", "fire"],
+    visual: {
+      masculine: "grape crown + silk",
+      feminine: "divine rave queen",
+      androgynous: "disco cult leader",
+    },
+  },
+  {
+    name: "Hades",
+    domains: ["death", "wealth"],
+    strengths: ["resilience", "strategy"],
+    weaknesses: ["overthinking", "indecision"],
+    vibes: ["the quiet observer"],
+    weapons: ["helmet of invisibility", "scepter"],
+    visual: {
+      masculine: "dark robes + shadows",
+      feminine: "obsidian crown + veil",
+      androgynous: "gothcore ruler",
+    },
+  },
+  {
+    name: "Zeus",
+    domains: ["leadership", "sky"],
+    strengths: ["leadership", "power"],
+    weaknesses: ["pride", "impulsiveness"],
+    vibes: ["the leader"],
+    weapons: ["lightning bolt"],
+    visual: {
+      masculine: "chest out + beard",
+      feminine: "thunder goddess robes",
+      androgynous: "storm-wrapped titan",
+    },
+  },
+  {
+    name: "Artemis",
+    domains: ["nature", "independence"],
+    strengths: ["resilience", "creativity"],
+    weaknesses: ["jealousy", "vengefulness"],
+    vibes: ["the quiet observer", "the peacemaker"],
+    weapons: ["bow and arrow"],
+    visual: {
+      masculine: "wild archer garb",
+      feminine: "moonlit huntress gear",
+      androgynous: "forest ranger fit",
+    },
+  },
+];
+
+type Gender = "masculine" | "feminine" | "androgynous" | string;
+type UserInput = {
+  strength: string;
+  weakness: string;
+  socialVibe: string;
+  weapon: string;
+  gender: Gender;
+  image: string | null;
+};
+
+type GodMatch = {
+  name: string;
+  score: number;
+  visual: string;
+};
+
+function matchGod(userInput: UserInput): GodMatch {
+  const { strength, weakness, socialVibe, weapon, gender } = userInput;
+  const scores = greekGods.map((god) => {
+    let score = 0;
+    if (god.strengths.includes(strength)) score += 3;
+    if (god.weaknesses.includes(weakness)) score += 2;
+    if (god.vibes.includes(socialVibe)) score += 2;
+    if (god.weapons.includes(weapon)) score += 1;
+    return {
+      name: god.name,
+      score,
+      visual: god.visual[gender as keyof typeof god.visual] || god.visual.androgynous,
+    };
+  });
+  scores.sort((a, b) => b.score - a.score);
+  return scores[0]; // highest match
+}
+
 export default function TopTrumpGenerator() {
   // State for form data
   const [formData, setFormData] = useState({
@@ -171,30 +312,6 @@ export default function TopTrumpGenerator() {
     return colors[currentStep] || colors[0]
   }
 
-  // Determine which Greek god/goddess matches the user based on their answers
-  const determineGodMatch = () => {
-    // This is a simplified matching algorithm
-    const { strength, weapon, socialVibe } = formData
-
-    // Primary matching based on strength and weapon
-    if (strength === "leadership" || weapon === "lightning") return "Zeus"
-    if (strength === "strategy" || weapon === "sword") return "Athena"
-    if (strength === "creativity" || weapon === "lyre") return "Apollo"
-    if (strength === "hotness") return "Aphrodite"
-    if (weapon === "sword") return "Ares"
-    if (weapon === "bow") return "Artemis"
-    if (strength === "chaosEnergy") return "Dionysus"
-    if (strength === "persuasion") return "Hermes"
-    if (socialVibe === "observer") return "Hades"
-
-    // Default fallbacks
-    if (formData.gender === "masculine") return "Poseidon"
-    if (formData.gender === "feminine") return "Demeter"
-
-    // Ultimate fallback
-    return "Hera"
-  }
-
   // Generate stats based on user answers
   const generateStats = () => {
     // Base stats
@@ -234,10 +351,10 @@ export default function TopTrumpGenerator() {
 
   // Generate a description based on user answers
   const generateDescription = () => {
-    const god = determineGodMatch()
+    const god = matchGod(formData)
     const { strength, weakness, socialVibe } = formData
 
-    let description = `With the divine essence of ${god}, `
+    let description = `With the divine essence of ${god.name}, `
 
     // Add strength
     if (strength === "leadership") description += "you command respect and authority. "
@@ -388,7 +505,8 @@ export default function TopTrumpGenerator() {
 
             <Card className="w-full max-w-sm shadow-xl border-4 border-amber-600 overflow-hidden">
               <div className="bg-gradient-to-b from-amber-500 to-amber-600 p-3 text-white">
-                <h2 className="text-xl font-bold text-center">{determineGodMatch()}</h2>
+                <h2 className="text-xl font-bold text-center">{matchGod(formData).name}</h2>
+                <div className="text-center text-sm text-amber-900 mb-2">{matchGod(formData).visual}</div>
               </div>
 
               {formData.image && (
