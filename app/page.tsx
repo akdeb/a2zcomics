@@ -3,7 +3,6 @@
 import { ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react"
 import Image from "next/image"
 import { useState, useRef } from "react"
-import html2canvas from "html2canvas"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -331,9 +330,6 @@ export default function TopTrumpGenerator() {
   // File input reference
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Ref for the card DOM node
-  const cardRef = useRef<HTMLDivElement>(null)
-
   // Define the steps/questions
   const steps = [
     {
@@ -554,36 +550,6 @@ export default function TopTrumpGenerator() {
     return formData[currentField as keyof typeof formData] !== ""
   }
 
-  // Download/share handler
-  const handleDownloadShare = async () => {
-    if (!cardRef.current) return;
-    const canvas = await html2canvas(cardRef.current, { backgroundColor: null, useCORS: true });
-    const dataUrl = canvas.toDataURL("image/png");
-    const file = await (await fetch(dataUrl)).blob();
-    const fileName = `greek-myth-top-trump.png`;
-
-    // Try Web Share API
-    if (navigator.canShare && navigator.canShare({ files: [new File([file], fileName, { type: file.type })] })) {
-      try {
-        await navigator.share({
-          files: [new File([file], fileName, { type: file.type })],
-          title: "Check out my Greek Myth Top Trump!",
-          text: "Which god are you?"
-        });
-        return;
-      } catch (e) {
-        // fallback to download
-      }
-    }
-    // Fallback: download
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <div className={`min-h-screen py-8 px-4 ${getStepColor()}`}>
       <div className="container mx-auto max-w-md">
@@ -706,72 +672,71 @@ export default function TopTrumpGenerator() {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-6">Your Greek Myth Top Trump</h1>
 
-            <div ref={cardRef} className="w-full flex justify-center">
-              <Card className={`relative w-full max-w-sm shadow-2xl border-4 ${getCardColors(matchGod(formData), formData).border} rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-gray-800 font-[Bangers,cursive]`}>
-                {/* Metallic Header */}
-                <div className="bg-gradient-to-r from-yellow-400 to-amber-600 p-3 flex flex-col items-center border-b-4 border-yellow-700 shadow-md">
-                  <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1" style={{ fontFamily: 'Bangers, cursive' }}>DIVINE NAME</span>
-                  <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase" style={{ fontFamily: 'Bangers, cursive' }}>{matchGod(formData).name}</h2>
+            <Card className={`relative w-full max-w-sm shadow-2xl border-4 ${getCardColors(matchGod(formData), formData).border} rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-gray-800`}>
+              {/* Metallic Header */}
+              <div className="bg-gradient-to-r from-yellow-400 to-amber-600 p-3 flex flex-col items-center border-b-4 border-yellow-700 shadow-md">
+                <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1">DIVINE NAME</span>
+                <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase">{matchGod(formData).name}</h2>
+              </div>
+
+              {/* God Image */}
+              {formData.image && (
+                <div className="relative w-full h-56 bg-black flex items-center justify-center border-b-2 border-gray-700">
+                  <Image
+                    src={formData.image || "/placeholder.svg"}
+                    alt="Your mythological self"
+                    fill
+                    style={{ objectFit: "cover" }}
+                    className="object-cover object-center"
+                  />
                 </div>
+              )}
 
-                {/* God Image */}
-                {formData.image && (
-                  <div className="relative w-full h-56 bg-black flex items-center justify-center border-b-2 border-gray-700">
-                    <Image
-                      src={formData.image || "/placeholder.svg"}
-                      alt="Your mythological self"
-                      fill
-                      style={{ objectFit: "cover" }}
-                      className="object-cover object-center"
-                    />
-                  </div>
-                )}
-
-                {/* Stat Bars */}
-                <div className="px-4 py-3 bg-gradient-to-br from-gray-900 to-gray-800 border-b-2 border-gray-700">
-                  <div className="mb-2">
-                    <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase">Divine Stats</h3>
-                    {Object.entries(generateStats()).map(([stat, value], idx) => {
-                      // Assign a color for each stat bar
-                      const statColors = [
-                        "bg-blue-400", // power
-                        "bg-green-400", // wisdom
-                        "bg-pink-400", // charisma
-                        "bg-purple-400", // cunning
-                        "bg-orange-400", // endurance
-                      ];
-                      return (
-                        <div key={stat} className="flex items-center mb-1">
-                          <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider">{stat}</span>
-                          <span className="w-8 text-right text-xs font-bold text-yellow-200">{value}</span>
-                          <div className="flex-1 ml-2 h-3 bg-gray-700 rounded-full overflow-hidden">
-                            <div
-                              className={`${statColors[idx % statColors.length]} h-3 rounded-full`}
-                              style={{ width: `${value}%` }}
-                            ></div>
-                          </div>
+              {/* Stat Bars */}
+              <div className="px-4 py-3 bg-gradient-to-br from-gray-900 to-gray-800 border-b-2 border-gray-700">
+                <div className="mb-2">
+                  <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase">Divine Stats</h3>
+                  {Object.entries(generateStats()).map(([stat, value], idx) => {
+                    // Assign a color for each stat bar
+                    const statColors = [
+                      "bg-blue-400", // power
+                      "bg-green-400", // wisdom
+                      "bg-pink-400", // charisma
+                      "bg-purple-400", // cunning
+                      "bg-orange-400", // endurance
+                    ];
+                    return (
+                      <div key={stat} className="flex items-center mb-1">
+                        <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider">{stat}</span>
+                        <span className="w-8 text-right text-xs font-bold text-yellow-200">{value}</span>
+                        <div className="flex-1 ml-2 h-3 bg-gray-700 rounded-full overflow-hidden">
+                          <div
+                            className={`${statColors[idx % statColors.length]} h-3 rounded-full`}
+                            style={{ width: `${value}%` }}
+                          ></div>
                         </div>
-                      );
-                    })}
-                  </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Visual Description */}
+              <div className="px-4 py-2 bg-gradient-to-r from-amber-200 to-yellow-100 border-b-2 border-yellow-400">
+                <div className="text-xs text-gray-800 text-center italic font-semibold">{matchGod(formData).visual}</div>
                 </div>
 
-                {/* Description Box */}
-                <div className="px-4 py-3 bg-gradient-to-br from-yellow-700 to-yellow-900">
-                  <div className="rounded-md bg-yellow-800/80 p-2 shadow-inner">
-                    <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest">Divine Essence</h3>
-                    <p className="text-sm text-yellow-100 leading-tight">{generateDescription()}</p>
-                  </div>
+              {/* Description Box */}
+              <div className="px-4 py-3 bg-gradient-to-br from-yellow-700 to-yellow-900">
+                <div className="rounded-md bg-yellow-800/80 p-2 shadow-inner">
+                  <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest">Divine Essence</h3>
+                  <p className="text-sm text-yellow-100 leading-tight">{generateDescription()}</p>
                 </div>
+              </div>
 
-                {/* Card Border Accent */}
-                <div className="absolute inset-0 pointer-events-none border-4 border-yellow-400 rounded-xl" style={{ boxShadow: '0 0 16px 4px #facc15, 0 2px 8px #0008' }}></div>
-              </Card>
-            </div>
-
-            <Button onClick={handleDownloadShare} className="mt-4" variant="secondary">
-              Download / Share Card
-            </Button>
+              {/* Card Border Accent */}
+              <div className="absolute inset-0 pointer-events-none border-4 border-yellow-400 rounded-xl" style={{ boxShadow: '0 0 16px 4px #facc15, 0 2px 8px #0008' }}></div>
+            </Card>
 
             <Button
               onClick={() => {
@@ -786,7 +751,7 @@ export default function TopTrumpGenerator() {
                   image: null,
                 })
               }}
-              className="mt-4"
+              className="mt-8"
             >
               Create Another Card
             </Button>
