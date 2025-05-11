@@ -3,6 +3,7 @@
 import { ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react"
 import Image from "next/image"
 import { useState, useRef } from "react"
+import html2canvas from "html2canvas"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -199,6 +200,14 @@ type GodMatch = {
   visual: string;
 };
 
+// Add this type definition before the getCardColors function
+type CardColors = {
+  border: string;
+  bg: string;
+  accent: string;
+  gradient: string;
+};
+
 function matchGod(userInput: UserInput): GodMatch {
   const { strength, weakness, socialVibe, weapon, gender } = userInput;
   
@@ -258,6 +267,50 @@ function matchGod(userInput: UserInput): GodMatch {
   return scores[0];
 }
 
+function getCardColors(god: GodMatch, userInput: UserInput): CardColors {
+  // Base color mappings for different domains
+  const domainColors = {
+    // Primary domains
+    love: { border: "border-pink-500", bg: "bg-pink-50", accent: "bg-pink-500" },
+    war: { border: "border-red-600", bg: "bg-red-50", accent: "bg-red-600" },
+    wisdom: { border: "border-blue-500", bg: "bg-blue-50", accent: "bg-blue-500" },
+    music: { border: "border-purple-500", bg: "bg-purple-50", accent: "bg-purple-500" },
+    nature: { border: "border-green-500", bg: "bg-green-50", accent: "bg-green-500" },
+    death: { border: "border-gray-700", bg: "bg-gray-50", accent: "bg-gray-700" },
+    leadership: { border: "border-amber-500", bg: "bg-amber-50", accent: "bg-amber-500" },
+    // Secondary domains
+    beauty: { border: "border-rose-500", bg: "bg-rose-50", accent: "bg-rose-500" },
+    chaos: { border: "border-orange-600", bg: "bg-orange-50", accent: "bg-orange-600" },
+    healing: { border: "border-emerald-500", bg: "bg-emerald-50", accent: "bg-emerald-500" },
+    prophecy: { border: "border-indigo-500", bg: "bg-indigo-50", accent: "bg-indigo-500" },
+    craftsmanship: { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600" },
+    harvest: { border: "border-lime-500", bg: "bg-lime-50", accent: "bg-lime-500" },
+    oceans: { border: "border-cyan-500", bg: "bg-cyan-50", accent: "bg-cyan-500" },
+    hearth: { border: "border-orange-500", bg: "bg-orange-50", accent: "bg-orange-500" },
+  };
+
+  // Find the matched god's full data
+  const matchedGod = greekGods.find(g => g.name === god.name);
+  if (!matchedGod) return { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600", gradient: "bg-amber-50" };
+
+  // Get colors based on primary domain
+  const primaryDomain = matchedGod.domains[0];
+  const colors = domainColors[primaryDomain as keyof typeof domainColors] || 
+                { border: "border-amber-600", bg: "bg-amber-50", accent: "bg-amber-600" };
+
+  // Add a subtle gradient based on secondary domain if it exists
+  const secondaryDomain = matchedGod.domains[1];
+  const secondaryColors = secondaryDomain ? 
+    domainColors[secondaryDomain as keyof typeof domainColors] : null;
+
+  return {
+    ...colors,
+    gradient: secondaryColors ? 
+      `bg-gradient-to-br from-${colors.bg.split('-')[1]}-50 to-${secondaryColors.bg.split('-')[1]}-100` :
+      colors.bg
+  };
+}
+
 export default function TopTrumpGenerator() {
   // State for form data
   const [formData, setFormData] = useState({
@@ -277,6 +330,9 @@ export default function TopTrumpGenerator() {
 
   // File input reference
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // Ref for the card DOM node
+  const cardRef = useRef<HTMLDivElement>(null)
 
   // Define the steps/questions
   const steps = [
@@ -498,6 +554,36 @@ export default function TopTrumpGenerator() {
     return formData[currentField as keyof typeof formData] !== ""
   }
 
+  // Download/share handler
+  const handleDownloadShare = async () => {
+    if (!cardRef.current) return;
+    const canvas = await html2canvas(cardRef.current, { backgroundColor: null, useCORS: true });
+    const dataUrl = canvas.toDataURL("image/png");
+    const file = await (await fetch(dataUrl)).blob();
+    const fileName = `greek-myth-top-trump.png`;
+
+    // Try Web Share API
+    if (navigator.canShare && navigator.canShare({ files: [new File([file], fileName, { type: file.type })] })) {
+      try {
+        await navigator.share({
+          files: [new File([file], fileName, { type: file.type })],
+          title: "Check out my Greek Myth Top Trump!",
+          text: "Which god are you?"
+        });
+        return;
+      } catch (e) {
+        // fallback to download
+      }
+    }
+    // Fallback: download
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className={`min-h-screen py-8 px-4 ${getStepColor()}`}>
       <div className="container mx-auto max-w-md">
@@ -620,46 +706,72 @@ export default function TopTrumpGenerator() {
           <div className="flex flex-col items-center">
             <h1 className="text-3xl font-bold text-center mb-6">Your Greek Myth Top Trump</h1>
 
-            <Card className="w-full max-w-sm shadow-xl border-4 border-amber-600 overflow-hidden">
-              <div className="bg-gradient-to-b from-amber-500 to-amber-600 p-3 text-white">
-                <h2 className="text-xl font-bold text-center">{matchGod(formData).name}</h2>
-                <div className="text-center text-sm text-amber-900 mb-2">{matchGod(formData).visual}</div>
-              </div>
-
-              {formData.image && (
-                <div className="relative w-full h-64">
-                  <Image
-                    src={formData.image || "/placeholder.svg"}
-                    alt="Your mythological self"
-                    fill
-                    style={{ objectFit: "cover" }}
-                  />
+            <div ref={cardRef} className="w-full flex justify-center">
+              <Card className={`relative w-full max-w-sm shadow-2xl border-4 ${getCardColors(matchGod(formData), formData).border} rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-gray-800 font-[Bangers,cursive]`}>
+                {/* Metallic Header */}
+                <div className="bg-gradient-to-r from-yellow-400 to-amber-600 p-3 flex flex-col items-center border-b-4 border-yellow-700 shadow-md">
+                  <span className="text-xs font-bold tracking-widest text-gray-900 uppercase mb-1" style={{ fontFamily: 'Bangers, cursive' }}>DIVINE NAME</span>
+                  <h2 className="text-2xl font-extrabold text-white drop-shadow-lg tracking-wider uppercase" style={{ fontFamily: 'Bangers, cursive' }}>{matchGod(formData).name}</h2>
                 </div>
-              )}
 
-              <div className="p-4 bg-amber-50">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold mb-2">Divine Stats</h3>
+                {/* God Image */}
+                {formData.image && (
+                  <div className="relative w-full h-56 bg-black flex items-center justify-center border-b-2 border-gray-700">
+                    <Image
+                      src={formData.image || "/placeholder.svg"}
+                      alt="Your mythological self"
+                      fill
+                      style={{ objectFit: "cover" }}
+                      className="object-cover object-center"
+                    />
+                  </div>
+                )}
 
-                  {Object.entries(generateStats()).map(([stat, value]) => (
-                    <div key={stat} className="flex justify-between items-center mb-1">
-                      <span className="capitalize">{stat}</span>
-                      <div className="flex items-center">
-                        <span className="mr-2 font-bold">{value}</span>
-                        <div className="w-24 bg-gray-200 h-2 rounded-full">
-                          <div className="bg-amber-600 h-2 rounded-full" style={{ width: `${value}%` }}></div>
+                {/* Stat Bars */}
+                <div className="px-4 py-3 bg-gradient-to-br from-gray-900 to-gray-800 border-b-2 border-gray-700">
+                  <div className="mb-2">
+                    <h3 className="text-lg font-bold text-yellow-300 tracking-wide mb-1 uppercase">Divine Stats</h3>
+                    {Object.entries(generateStats()).map(([stat, value], idx) => {
+                      // Assign a color for each stat bar
+                      const statColors = [
+                        "bg-blue-400", // power
+                        "bg-green-400", // wisdom
+                        "bg-pink-400", // charisma
+                        "bg-purple-400", // cunning
+                        "bg-orange-400", // endurance
+                      ];
+                      return (
+                        <div key={stat} className="flex items-center mb-1">
+                          <span className="w-24 text-xs font-bold text-gray-200 uppercase tracking-wider">{stat}</span>
+                          <span className="w-8 text-right text-xs font-bold text-yellow-200">{value}</span>
+                          <div className="flex-1 ml-2 h-3 bg-gray-700 rounded-full overflow-hidden">
+                            <div
+                              className={`${statColors[idx % statColors.length]} h-3 rounded-full`}
+                              style={{ width: `${value}%` }}
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    })}
+                  </div>
                 </div>
 
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Divine Essence</h3>
-                  <p className="text-sm">{generateDescription()}</p>
+                {/* Description Box */}
+                <div className="px-4 py-3 bg-gradient-to-br from-yellow-700 to-yellow-900">
+                  <div className="rounded-md bg-yellow-800/80 p-2 shadow-inner">
+                    <h3 className="text-xs font-bold text-yellow-300 uppercase mb-1 tracking-widest">Divine Essence</h3>
+                    <p className="text-sm text-yellow-100 leading-tight">{generateDescription()}</p>
+                  </div>
                 </div>
-              </div>
-            </Card>
+
+                {/* Card Border Accent */}
+                <div className="absolute inset-0 pointer-events-none border-4 border-yellow-400 rounded-xl" style={{ boxShadow: '0 0 16px 4px #facc15, 0 2px 8px #0008' }}></div>
+              </Card>
+            </div>
+
+            <Button onClick={handleDownloadShare} className="mt-4" variant="secondary">
+              Download / Share Card
+            </Button>
 
             <Button
               onClick={() => {
@@ -674,7 +786,7 @@ export default function TopTrumpGenerator() {
                   image: null,
                 })
               }}
-              className="mt-8"
+              className="mt-4"
             >
               Create Another Card
             </Button>
