@@ -136,20 +136,61 @@ type GodMatch = {
 
 function matchGod(userInput: UserInput): GodMatch {
   const { strength, weakness, socialVibe, weapon, gender } = userInput;
+  
+  // Helper function to add random variation to a score with more precision
+  const addRandomVariation = (baseScore: number, maxVariation: number = 1) => {
+    // Generate a random number between -maxVariation and +maxVariation with more decimal places
+    const variation = (Math.random() * 2 - 1) * maxVariation;
+    // Add a small random factor (0-0.3) to create more variety
+    const extraRandom = Math.random() * 0.3;
+    return Math.max(0, baseScore + variation + extraRandom);
+  };
+
+  // Helper function to generate a random personality factor
+  const getPersonalityFactor = () => {
+    // Returns a random number between 0.8 and 1.2 to simulate personality compatibility
+    return 0.8 + Math.random() * 0.4;
+  };
+
   const scores = greekGods.map((god) => {
     let score = 0;
-    if (god.strengths.includes(strength)) score += 3;
-    if (god.weaknesses.includes(weakness)) score += 2;
-    if (god.vibes.includes(socialVibe)) score += 2;
-    if (god.weapons.includes(weapon)) score += 1;
+    const personalityFactor = getPersonalityFactor();
+    
+    // Add random variation to each component with different ranges
+    if (god.strengths.includes(strength)) {
+      // Base 3 points with ±0.8 variation and personality factor
+      score += addRandomVariation(3, 0.8) * personalityFactor;
+    }
+    if (god.weaknesses.includes(weakness)) {
+      // Base 2 points with ±0.6 variation and personality factor
+      score += addRandomVariation(2, 0.6) * personalityFactor;
+    }
+    if (god.vibes.includes(socialVibe)) {
+      // Base 2 points with ±0.7 variation and personality factor
+      score += addRandomVariation(2, 0.7) * personalityFactor;
+    }
+    if (god.weapons.includes(weapon)) {
+      // Base 1 point with ±0.5 variation and personality factor
+      score += addRandomVariation(1, 0.5) * personalityFactor;
+    }
+
+    // Add a random bonus that varies based on the god's domains
+    const domainBonus = god.domains.length * (0.2 + Math.random() * 0.3);
+    score += domainBonus;
+
+    // Add a small random factor (0-0.4) to create more variety
+    score += Math.random() * 0.4;
+
     return {
       name: god.name,
-      score,
+      score: Number(score.toFixed(3)), // Round to 3 decimal places for more precision
       visual: god.visual[gender as keyof typeof god.visual] || god.visual.androgynous,
     };
   });
+
+  // Sort by score and return the highest match
   scores.sort((a, b) => b.score - a.score);
-  return scores[0]; // highest match
+  return scores[0];
 }
 
 export default function TopTrumpGenerator() {
@@ -177,6 +218,12 @@ export default function TopTrumpGenerator() {
 
   // Define the steps/questions
   const steps = [
+    {
+      id: "image",
+      title: "Upload your image 📸",
+      description: "This will be used for your Top Trump card",
+      type: "image",
+    },
     {
       id: "strength",
       title: "What's your greatest strength? 💪",
@@ -230,12 +277,6 @@ export default function TopTrumpGenerator() {
         { value: "lyre", label: "Lyre" },
         { value: "poison", label: "Poison" },
       ],
-    },
-    {
-      id: "image",
-      title: "Upload your image 📸",
-      description: "This will be used for your Top Trump card",
-      type: "image",
     },
     {
       id: "gender",
@@ -302,14 +343,11 @@ export default function TopTrumpGenerator() {
   // Get background color based on current step
   const getStepColor = () => {
     const colors = [
+      "bg-gradient-to-br from-pink-50 to-fuchsia-100", // Image upload
       "bg-gradient-to-br from-amber-50 to-yellow-100", // Strength
       "bg-gradient-to-br from-purple-50 to-violet-100", // Weakness
-      "bg-gradient-to-br from-emerald-50 to-green-100", // Activity
-      "bg-gradient-to-br from-blue-50 to-cyan-100", // Social Vibe
-      "bg-gradient-to-br from-red-50 to-rose-100", // Weapon
-      "bg-gradient-to-br from-pink-50 to-fuchsia-100", // Love Life
-      "bg-gradient-to-br from-gray-50 to-slate-100", // Downfall
-      "bg-gradient-to-br from-orange-50 to-amber-100", // Image
+      "bg-gradient-to-br from-emerald-50 to-green-100", // Social Vibe
+      "bg-gradient-to-br from-blue-50 to-cyan-100", // Weapon
       "bg-gradient-to-br from-teal-50 to-cyan-100", // Gender
     ]
     return colors[currentStep] || colors[0]
@@ -455,12 +493,26 @@ export default function TopTrumpGenerator() {
                     {currentStepData.options?.map((option) => (
                       <div
                         key={option.value}
-                        className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-gray-50"
+                        className="relative"
                       >
-                        <RadioGroupItem value={option.value} />
-                        <Label htmlFor={option.value} className="flex-grow cursor-pointer">
-                          {option.label}
-                        </Label>
+                        <input
+                          type="radio"
+                          id={option.value}
+                          name={currentStepData.id}
+                          value={option.value}
+                          checked={formData[currentStepData.id as keyof typeof formData] === option.value}
+                          onChange={() => handleOptionSelect(option.value)}
+                          className="peer sr-only"
+                        />
+                        <label
+                          htmlFor={option.value}
+                          className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-gray-50 cursor-pointer transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:hover:bg-blue-100"
+                        >
+                          <div className="flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:border-blue-500 shrink-0">
+                            <div className={`w-3 h-3 rounded-full bg-blue-500 transition-transform duration-200 ${formData[currentStepData.id as keyof typeof formData] === option.value ? 'scale-100' : 'scale-0'}`} />
+                          </div>
+                          <span className="flex-grow">{option.label}</span>
+                        </label>
                       </div>
                     ))}
                   </RadioGroup>
