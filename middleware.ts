@@ -1,9 +1,4 @@
-import NextAuth from "next-auth";
-
-import { authConfig } from "@/app/(auth)/auth.config";
-
-export default NextAuth(authConfig).auth;
-
+// This middleware is disabled
 export const config = {
-  matcher: ["/", "/:id", "/api/:path*", "/login", "/register"],
+  matcher: [], // Empty matcher means it won't apply to any routes
 };
