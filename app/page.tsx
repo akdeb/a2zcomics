@@ -477,17 +477,18 @@ export default function TopTrumpGenerator() {
                         <input
                           type="radio"
                           id={option.value}
+                          name={currentStepData.id}
                           value={option.value}
                           checked={formData[currentStepData.id as keyof typeof formData] === option.value}
                           onChange={() => handleOptionSelect(option.value)}
-                          className="peer sr-only" // Hide the actual radio button
+                          className="peer sr-only"
                         />
                         <label
                           htmlFor={option.value}
                           className="flex items-center space-x-2 rounded-lg border p-3 hover:bg-gray-50 cursor-pointer transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:hover:bg-blue-100"
                         >
-                          <div className="flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:border-blue-500">
-                            <div className="w-3 h-3 rounded-full bg-blue-500 scale-0 peer-checked:scale-100 transition-transform" />
+                          <div className="flex items-center justify-center w-5 h-5 border-2 border-gray-300 rounded-full peer-checked:border-blue-500 shrink-0">
+                            <div className={`w-3 h-3 rounded-full bg-blue-500 transition-transform duration-200 ${formData[currentStepData.id as keyof typeof formData] === option.value ? 'scale-100' : 'scale-0'}`} />
                           </div>
                           <span className="flex-grow">{option.label}</span>
                         </label>
