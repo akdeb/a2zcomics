@@ -44,22 +44,20 @@ export async function POST(request: Request) {
       );
     }
 
-    // Get the URL of the generated image
-    const imageUrl = result.data[0].url;
-    
-    if (!imageUrl) {
-      return NextResponse.json(
-        { error: "Failed to get image URL" },
-        { status: 500 }
-      );
-    }
+	const imageBase64 = result.data[0].b64_json;
 
-    // Return the image URL to the client
-    return NextResponse.json({ 
-      imageUrl,
-      revised_prompt: result.data[0].revised_prompt 
-    });
-    
+	if (!imageBase64) {
+	  return NextResponse.json(
+		{ error: "Failed to get image data" },
+		{ status: 500 }
+	  );
+	}
+	
+	// Return the base64 data to the client
+	return NextResponse.json({ 
+	  imageUrl: `data:image/png;base64,${imageBase64}`,
+	  revised_prompt: result.data[0].revised_prompt 
+	});
   } catch (error: any) {
     console.error("Error editing image:", error);
     return NextResponse.json(

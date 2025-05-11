@@ -300,6 +300,55 @@ export default function TopTrumpGenerator() {
     })
   }
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setResult(null);
+    
+    try {
+      const formDataToSend = new FormData();
+      
+      // Add prompt
+      const godMatch = matchGod(formData);
+      const prompt = `Greek god ${godMatch.name} with ${godMatch.visual}`;
+      formDataToSend.append('prompt', prompt);
+      
+      // Add ONLY the one image stored in formData.image
+      if (formData.image) {
+        // Convert base64 to file
+        const imageData = formData.image.split(',')[1];
+        const blob = new Blob([Buffer.from(imageData, 'base64')], { type: 'image/png' });
+        const file = new File([blob], 'user-image.png', { type: 'image/png' });
+        
+        // Add the SINGLE image
+        formDataToSend.append('images', file);
+      } else {
+        throw new Error('Please upload an image first');
+      }
+      
+      const response = await fetch('/api/image-generation', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to edit image');
+      }
+      
+      const data = await response.json();
+      
+      // This is a data:image/png;base64,... string from the API
+      setResult(data.imageUrl);
+      setShowCard(true);
+      
+    } catch (error) {
+      console.error('Error:', error);
+      setShowCard(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle image upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -318,11 +367,12 @@ export default function TopTrumpGenerator() {
   }
 
   // Navigation functions
-  const goToNextStep = () => {
+  const goToNextStep = (e: React.FormEvent) => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1)
     } else {
       // Generate the card when all steps are completed
+      handleSubmit(e);
       setShowCard(true)
     }
   }
@@ -521,27 +571,32 @@ export default function TopTrumpGenerator() {
 
               <CardFooter className="flex flex-col gap-3">
                 <div className="flex w-full gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={goToPreviousStep}
-                    disabled={currentStep === 0}
-                    className="flex-1"
-                  >
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                  </Button>
-
-                  <Button type="button" onClick={goToNextStep} disabled={!isCurrentStepAnswered()} className="flex-1">
-                    {isLastStep ? (
-                      <>
-                        Generate <Sparkles className="ml-2 h-4 w-4" />
-                      </>
-                    ) : (
-                      <>
-                        Next <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
+                <Button 
+  type="button" 
+  onClick={goToNextStep} 
+  disabled={!isCurrentStepAnswered() || loading} 
+  className="flex-1"
+>
+  {isLastStep ? (
+    loading ? (
+      <div className="flex items-center">
+        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        Generating...
+      </div>
+    ) : (
+      <>
+        Generate <Sparkles className="ml-2 h-4 w-4" />
+      </>
+    )
+  ) : (
+    <>
+      Next <ArrowRight className="ml-2 h-4 w-4" />
+    </>
+  )}
+</Button>
                 </div>
 
                 <div className="w-full bg-gray-200 h-2 rounded-full mt-4">
@@ -564,14 +619,21 @@ export default function TopTrumpGenerator() {
                 <div className="text-center text-sm text-amber-900 mb-2">{matchGod(formData).visual}</div>
               </div>
 
-              {formData.image && (
+              {result && !loading ? (
                 <div className="relative w-full h-64">
-                  <Image
-                    src={formData.image || "/placeholder.svg"}
-                    alt="Your mythological self"
+                  <Image 
+                    src={result}
+                    alt="Generated image" 
                     fill
-                    style={{ objectFit: "cover" }}
+                    className="object-contain"
+                    priority
                   />
+                </div>
+              ) : (
+                <div className="relative w-full h-64">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full size-12 border-y-2 border-white"></div>
+                  </div>
                 </div>
               )}
 
@@ -611,6 +673,7 @@ export default function TopTrumpGenerator() {
                   gender: "",
                   image: null,
                 })
+                setResult(null)
               }}
               className="mt-8"
             >
@@ -620,5 +683,6 @@ export default function TopTrumpGenerator() {
         )}
       </div>
     </div>
+    
   )
 }
