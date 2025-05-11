@@ -6,7 +6,7 @@ export const LoadingState = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[200px] p-6">
       {/* Cute loading animation */}
-      <div className="relative w-32 h-32 mb-6">
+      <div className="relative size-32 mb-6">
         <Image
           src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
           alt="Loading animation"

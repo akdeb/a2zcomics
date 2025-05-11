@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useRef } from "react"
 import { ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react"
 import Image from "next/image"
+import { useState, useRef } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
