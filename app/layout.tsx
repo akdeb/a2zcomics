@@ -1,7 +1,9 @@
-import type React from "react"
-import "@/app/globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/custom/theme-provider"
+
 import type { Metadata } from "next"
+import type React from "react"
+
+import "@/app/globals.css"
 
 export const metadata: Metadata = {
   title: "Top Trump Generator - Greek Myths Edition",
